@@ -3,8 +3,7 @@ import numpy as np
 
 
 def concordance_matrix_iv(data, direction, weights):
-    conc_matrix = pd.DataFrame(
-        np.zeros((len(data), len(data))), index=data.index, columns=data.index)
+    conc_matrix = pd.DataFrame(np.zeros((len(data), len(data))))
     for i in range(len(data)):
         for j in range(len(data)):
             if i != j:
@@ -15,12 +14,11 @@ def concordance_matrix_iv(data, direction, weights):
                     if diff >= 0:
                         pref += w
                 conc_matrix.iloc[i, j] = pref / sum(weights.values())
-    return conc_matrix
+    return conc_matrix.values.tolist()
 
 
-def non_veto_matrix(data, directions, veto):
-    veto_matrix = pd.DataFrame(
-        np.zeros((len(data), len(data))), index=data.index, columns=data.index)
+def not_veto_matrix(data, directions, veto):
+    veto_matrix = pd.DataFrame(np.zeros((len(data), len(data))))
     for i in range(len(data)):
         for j in range(len(data)):
             if i != j:
@@ -31,7 +29,23 @@ def non_veto_matrix(data, directions, veto):
                     if diff >= veto[col]:
                         veto_matrix.iloc[i, j] = 0
                         break
-    return veto_matrix
+    return veto_matrix.values.tolist()
+
+
+def electre(data, veto_matrix, concordance_matrix, s=0.6):
+    is_dominate = []
+    for i in range(len(data)):
+        is_dominate.append([])
+    for i in range(len(data)):
+        for j in range(len(data)):
+            if i != j:
+                if concordance_matrix[i][j] >= s and veto_matrix[i][j] == 1:
+                    is_dominate[j].append(data.iloc[i, 0])
+    kernel = []
+    for i in range(len(is_dominate)):
+        if len(is_dominate[i]) == 0:
+            kernel.append(data.iloc[i, 0])
+    return kernel
 
 
 if __name__ == '__main__':
@@ -52,5 +66,8 @@ if __name__ == '__main__':
                          'C3': 200, 'C4': 4, 'C5': 2, 'C6': 2}
     veto_example = {'C1': 45, 'C2': 29,
                     'C3': 550, 'C4': 6, 'C5': 4.5, 'C6': 4.5}
-    print(concordance_matrix_iv(data_example, directions_example, weights_example))
-    print(non_veto_matrix(data_example, directions_example, veto_example))
+    concordance_matrix = concordance_matrix_iv(
+        data_example, directions_example, weights_example)
+    veto_matrix = not_veto_matrix(
+        data_example, directions_example, veto_example)
+    print(electre(data_example, veto_matrix, concordance_matrix))

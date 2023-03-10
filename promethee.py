@@ -3,8 +3,7 @@ import numpy as np
 
 
 def preference_degree(data, direction, weights, threshold):
-    pref_matrix = pd.DataFrame(
-        np.zeros((len(data), len(data))), index=data.index, columns=data.index)
+    pref_matrix = pd.DataFrame(np.zeros((len(data), len(data))))
     for i in range(len(data)):
         for j in range(len(data)):
             if i != j:

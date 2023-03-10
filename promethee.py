@@ -3,7 +3,8 @@ import numpy as np
 
 
 def preference_degree(data, direction, weights, threshold):
-    pref_matrix = pd.DataFrame(np.zeros((len(data), len(data))), index=data.index, columns=data.index)
+    pref_matrix = pd.DataFrame(
+        np.zeros((len(data), len(data))), index=data.index, columns=data.index)
     for i in range(len(data)):
         for j in range(len(data)):
             if i != j:
@@ -52,7 +53,8 @@ if __name__ == '__main__':
                        'C3': 0.2, 'C4': 0.1, 'C5': 0.2, 'C6': 0.2}
     threshold_example = {'C1': 20, 'C2': 10,
                          'C3': 200, 'C4': 4, 'C5': 2, 'C6': 2}
-    pref_matrix_example = preference_degree(data_example, directions_example, weights_example, threshold_example)
+    pref_matrix_example = preference_degree(
+        data_example, directions_example, weights_example, threshold_example)
     phi_plus_example, phi_minus_example,  phi_plus_example_ranking, phi_minus_example_ranking = \
         promethee1(pref_matrix_example, data_example)
     print(promethee2(phi_plus_example, phi_minus_example, data_example))
